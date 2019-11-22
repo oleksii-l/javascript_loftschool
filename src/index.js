@@ -17,6 +17,17 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
+    if (!Array.isArray(array) || array.length == 0) {
+        throw Error('empty array');
+    }
+
+    for (let elem of array) {
+        if (!fn(elem)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /*
@@ -36,6 +47,17 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
+    if (!Array.isArray(array) || array.length == 0) {
+        throw Error('empty array');
+    }
+
+    for (let elem of array) {
+        if (fn(elem)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*
@@ -49,7 +71,22 @@ function isSomeTrue(array, fn) {
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn) {
+function returnBadArguments(fn, ...args) {
+    if (typeof fn !== 'function') {
+        throw Error('fn is not a function');
+    }
+
+    var res = [];
+
+    for (var a of args) {
+        try {
+            fn(a);
+        } catch (e) {
+            res.push(a);
+        }
+    }
+
+    return res;
 }
 
 /*
@@ -69,7 +106,39 @@ function returnBadArguments(fn) {
    - number не является числом (с текстом "number is not a number")
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator() {
+function calculator(number = 0) {
+    if (typeof number !== 'number') {
+        throw Error('number is not a number');
+    }
+
+    return {
+        sum(...args) {
+            
+            return args.reduce((a, b) => a + b, number);
+        },
+
+        dif(...args) {
+            
+            return args.reduce((a, b) => a - b, number);
+        },
+
+        div(...args) {
+            args.forEach(item => {
+                if (item === 0) {
+                    throw Error('division by 0');
+                }
+            })
+            
+            return args.reduce((a, b) => a / b, number);
+        },
+
+        mul(...args) {
+            
+            return args.reduce((a, b) => a * b, number);
+        },
+
+    }
+
 }
 
 /* При решении задач, пострайтесь использовать отладчик */
