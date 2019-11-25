@@ -24,6 +24,7 @@ function map(array, fn) {
     for (let i = 0; i < array.length; i++) {
         res[i] = fn(array[i], i, array);
     }
+    
     return res;
 }
 
@@ -89,7 +90,7 @@ function slice(array, from = 0, to = array.length) {
         to = array.length;
     }
 
-    for (let i = from, j = 0; i < to; i++ , j++) {
+    for (let i = from, j = 0; i < to; i++, j++) {
         result[j] = array[i];
     }
 
@@ -104,8 +105,9 @@ function slice(array, from = 0, to = array.length) {
  */
 function createProxy(obj) {
     return new Proxy(obj, {
-        set: function (target, property, value, receiver) {
+        set: function (target, property, value) {
             target[property] = value * value;
+            
             return true;
         }
 
