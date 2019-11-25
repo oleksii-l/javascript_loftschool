@@ -7,7 +7,7 @@
  Посмотрите как работает forEach и повторите это поведение для массива, который будет передан в параметре array
  */
 function forEach(array, fn) {
-    for (var i = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
         fn(array[i], i, array);
     }
 }
@@ -20,7 +20,8 @@ function forEach(array, fn) {
  */
 function map(array, fn) {
     var res = [];
-    for (var i = 0; i < array.length; i++) {
+
+    for (let i = 0; i < array.length; i++) {
         res[i] = fn(array[i], i, array);
     }
     return res;
@@ -35,14 +36,15 @@ function map(array, fn) {
 function reduce(array, fn, initial) {
     var accumulator = array[0];
     var i = 1;
-    if( initial != null ) {
+
+    if (initial != null) {
         accumulator = initial;
         i = 0
     }
-    for(; i <array.length; i++) {
+    for (; i < array.length; i++) {
         accumulator = fn(accumulator, array[i], i, array);
     }
-    
+
     return accumulator;
 }
 
@@ -55,14 +57,7 @@ function reduce(array, fn, initial) {
    upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
  */
 function upperProps(obj) {
-    var res = [];
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key) && typeof obj[key] !== 'function') {
-           res.push( key.toUpperCase());
-        }
-    }
-
-    return res;
+    return Object.keys(obj).map(item => item.toUpperCase());
 }
 
 /*
@@ -71,14 +66,14 @@ function upperProps(obj) {
  Напишите аналог встроенного метода slice для работы с массивами
  Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
  */
-function slice(array, from=0, to=array.length) {
+function slice(array, from = 0, to = array.length) {
     var result = [];
 
     if (from < 0) {
         from = array.length + from;
     }
 
-    if(from < 0) {
+    if (from < 0) {
         from = 0;
     }
 
@@ -94,7 +89,7 @@ function slice(array, from=0, to=array.length) {
         to = array.length;
     }
 
-    for (var i = from, j = 0; i < to; i++ , j++) {
+    for (let i = from, j = 0; i < to; i++ , j++) {
         result[j] = array[i];
     }
 
