@@ -21,6 +21,10 @@ function isAllTrue(array, fn) {
         throw Error('empty array');
     }
 
+    if (typeof fn !== 'function') {
+        throw Error('fn is not a function');
+    }
+
     for (let elem of array) {
         if (!fn(elem)) {
             return false;
@@ -49,6 +53,10 @@ function isAllTrue(array, fn) {
 function isSomeTrue(array, fn) {
     if (!Array.isArray(array) || array.length == 0) {
         throw Error('empty array');
+    }
+
+    if (typeof fn !== 'function') {
+        throw Error('fn is not a function');
     }
 
     for (let elem of array) {
