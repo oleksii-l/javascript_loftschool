@@ -27,6 +27,16 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+    let div = document.createElement('div');
+    
+    div.classList.add('draggable-div');
+    div.style.backgroundColor = 'green';
+    div.style.top = '200px';
+    div.style.left = '300px';
+    div.style.width = '150px';
+    div.style.height = "100px";
+
+    return div;
 }
 
 /*
@@ -38,6 +48,7 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
