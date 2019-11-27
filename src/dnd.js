@@ -48,7 +48,13 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
-    
+    target.addEventListener('dragstart', () => {});
+    target.addEventListener('drag', () => {});
+    target.addEventListener('dragenter', () => {});
+    target.addEventListener('dragleave', () => {});
+    target.addEventListener('dragover', () => {});
+    target.addEventListener('drop', () => {});
+    target.addEventListener('dragend', () => {});
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
