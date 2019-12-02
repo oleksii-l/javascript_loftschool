@@ -60,7 +60,9 @@ function emulateClick(target) {
    delegate(document.body, () => console.log('кликнули на button')) // добавит такой обработчик кликов для body, который будет вызывать указанную функцию только если кликнули на кнопку (элемент с тегом button)
  */
 function delegate(target, fn) {
-    target.querySelectorAll('button').forEach(b => b.addEventListener('click', fn));
+    let buttons = target.querySelectorAll('button');
+    
+    buttons.forEach(b => b.addEventListener('click', fn));
 }
 
 /*
