@@ -52,11 +52,13 @@ function prepend(what, where) {
 function findAllPSiblings(where) {
     let res = [];
 
-    for (let elem of where.children) {
-        if (elem.nextSibling && elem.nextSibling.tagName.toUpperCase() === 'P') {
-            res.push(elem);
+    let ps = where.querySelectorAll('p');
+
+    ps.forEach(p => {
+        if (p.previousSibling) {
+            res.push(p.previousSibling);
         }
-    }
+    });
 
     return res;
 }
@@ -123,17 +125,16 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
-    let textNodes = [];
-
     for (let child of where.childNodes) {
         if (child.nodeType === 3) {
-            textNodes.push(child);
-        } else {
-            deleteTextNodesRecursive(child);
+            where.removeChild(child);
         }
     }
-    for (let node of textNodes) {
-        where.removeChild(node);
+
+    for (let child of where.childNodes) {
+        if (child.childNodes.length > 0) {
+            deleteTextNodesRecursive(child);
+        }
     }
 
     return where;
@@ -168,17 +169,30 @@ function collectDOMStat(root) {
 
     for (let child of root.childNodes) {
         if (child.nodeType === 3) {
-            res.texts += 1;
+            res.texts++;
         } else if (child.nodeType === 1) {
-            res.tags[child.tagName] = (res.tags[child.tagName] || 0) + 1;
-            child.classList.forEach(clazz => res.classes[clazz] = (res.classes[clazz] || 0) + 1);
+            if (res.tags.hasOwnProperty(child.tagName)) {
+                res.tags[child.tagName]++;
+            } else {
+                res.tags[child.tagName] = 1;
+            }
 
-            var tempRes = collectDOMStat(child);
+            for (const className of child.classList) {
+                if (res.classes.hasOwnProperty([className])) {
+                    res.classes[className]++;
+                } else {
+                    res.classes[className] = 1;
+                }
+            }
 
-            res.texts += tempRes.texts;
-            Object.keys(tempRes.classes).forEach(clazz => res.classes[clazz] = (res.classes[clazz] || 0) 
-                + tempRes.classes[clazz]);
-            Object.keys(tempRes.tags).forEach(tag => res.tags[tag] = (res.tags[tag] || 0) + tempRes.tags[tag]);
+            if (child.childNodes.length > 0) {
+                var tempRes = collectDOMStat(child);
+
+                res.texts += tempRes.texts;
+                Object.keys(tempRes.classes).forEach(clazz => res.classes[clazz] = (res.classes[clazz] || 0)
+                    + tempRes.classes[clazz]);
+                Object.keys(tempRes.tags).forEach(tag => res.tags[tag] = (res.tags[tag] || 0) + tempRes.tags[tag]);
+            }
         }
     }
 
@@ -246,7 +260,7 @@ function observeChildNodes(where, fn) {
     };
 
     const observer = new MutationObserver(callback);
-    
+
     observer.observe(where, config);
 }
 
