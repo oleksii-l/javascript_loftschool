@@ -43,10 +43,62 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('keyup', function() {
+filterNameInput.addEventListener('keyup', function () {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    eraseTable();
+    loadCoolies();
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    if (addNameInput.value !== '') {
+        let name = addNameInput.value;
+        let value = addValueInput.value;
+
+        document.cookie = `${name}=${value}`;
+        eraseTable();
+        loadCoolies();
+    }
 });
+
+function loadCoolies() {
+    document.cookie.split('; ').forEach(cookie => {
+        let [name, value] = cookie.split('=');
+
+        appendRow(name, value);
+    })
+}
+
+function appendRow(name, value) {
+    let substr = filterNameInput.value;
+
+    if (!name.includes(substr) && !value.includes(substr)) {
+        return;
+    }
+
+    let tr = document.createElement('tr');
+    let tdName = document.createElement('td');
+    let tdValue = document.createElement('td');
+    let tdBtn = document.createElement('td');
+    let delBtn = document.createElement('button');
+
+    tdName.innerText = name;
+    tdValue.innerText = value;
+    delBtn.innerText = 'Remove';
+    delBtn.addEventListener('click', () => {
+        listTable.removeChild(tr);
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    });
+    tdBtn.appendChild(delBtn);
+    tr.appendChild(tdName);
+    tr.appendChild(tdValue);
+    tr.appendChild(tdBtn);
+
+    listTable.appendChild(tr);
+}
+
+function eraseTable() {
+    listTable.innerHTML = '';
+}
+
+window.addEventListener('load', loadCoolies);
