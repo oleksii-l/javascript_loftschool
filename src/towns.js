@@ -37,6 +37,24 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    return new Promise((resolve, reject) => {
+        fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
+            .then(responce => responce.json())
+            .then(json => {
+
+                resolve(json.sort((a, b) => {
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+                    
+                    return 0;
+                }));
+            })
+            .catch(reject);
+    });
 }
 
 /*
@@ -51,6 +69,7 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    return full.toLowerCase().includes(chunk.toLowerCase());
 }
 
 /* Блок с надписью "Загрузка" */
@@ -62,9 +81,54 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener('keyup', function() {
+const failedBlock = homeworkContainer.querySelector('#failed-block');
+
+const failedBtn = homeworkContainer.querySelector('#failed-btn');
+
+failedBtn.addEventListener('click', function () {
+    doLoadTowns();
+})
+
+filterInput.addEventListener('keyup', function () {
     // это обработчик нажатия кливиш в текстовом поле
+    let substr = filterInput.value;
+
+    for (let elem of filterResult.children) {
+        if ( substr !=='' && isMatching(elem.innerText, substr)) {
+            elem.style.display = 'block';
+        } else {
+            elem.style.display = 'none';
+        }
+    }
+
 });
+
+function doLoadTowns() {
+    loadTowns()
+        .then(towns => {
+            towns.forEach(town => {
+                addTownToResult(town.name);
+            });
+
+            loadingBlock.style.display = 'none';
+            filterBlock.style.display = 'block';
+            failedBlock.style.display = 'none';
+            failedBtn.style.display = 'none';
+        })
+        .catch(() => {
+            failedBlock.style.display = 'block';
+            failedBtn.style.display = 'block';
+        })
+}
+
+function addTownToResult(name) {
+    let townDiv = document.createElement('div');
+    
+    townDiv.innerText = name;
+    filterResult.appendChild(townDiv);
+}
+
+doLoadTowns();
 
 export {
     loadTowns,
