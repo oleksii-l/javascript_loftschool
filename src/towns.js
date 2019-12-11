@@ -41,7 +41,6 @@ function loadTowns() {
         fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
             .then(responce => responce.json())
             .then(json => {
-
                 resolve(json.sort((a, b) => {
                     if (a.name > b.name) {
                         return 1;
@@ -49,7 +48,7 @@ function loadTowns() {
                     if (a.name < b.name) {
                         return -1;
                     }
-                    
+
                     return 0;
                 }));
             })
@@ -91,29 +90,22 @@ failedBtn.addEventListener('click', function () {
 
 filterInput.addEventListener('keyup', function () {
     // это обработчик нажатия кливиш в текстовом поле
-    let substr = filterInput.value;
-
-    for (let elem of filterResult.children) {
-        if ( substr !=='' && isMatching(elem.innerText, substr)) {
-            elem.style.display = 'block';
-        } else {
-            elem.style.display = 'none';
-        }
-    }
-
+    doLoadTowns();
 });
 
-function doLoadTowns() {
+let loadedTowns = [];
+let filteredTowns = [];
+
+function loadAllTowns() {
     loadTowns()
         .then(towns => {
-            towns.forEach(town => {
-                addTownToResult(town.name);
-            });
+            towns.forEach(town => loadedTowns.push(town.name));
 
             loadingBlock.style.display = 'none';
             filterBlock.style.display = 'block';
             failedBlock.style.display = 'none';
             failedBtn.style.display = 'none';
+
         })
         .catch(() => {
             failedBlock.style.display = 'block';
@@ -121,14 +113,36 @@ function doLoadTowns() {
         })
 }
 
-function addTownToResult(name) {
-    let townDiv = document.createElement('div');
-    
-    townDiv.innerText = name;
-    filterResult.appendChild(townDiv);
+function doLoadTowns() {
+
+    filteredTowns = [];
+
+    loadedTowns.forEach(town => {
+        if (filterInput.value.length != 0 && isMatching(town, filterInput.value)) {
+            filteredTowns.push(town);
+        }
+    })
+
+    loadingBlock.style.display = 'none';
+    filterBlock.style.display = 'block';
+    failedBlock.style.display = 'none';
+    failedBtn.style.display = 'none';
+
+    let fragment = document.createDocumentFragment();
+
+    filteredTowns.forEach(town => {
+        let townBlock = document.createElement('div');
+
+        townBlock.innerText = town;
+        fragment.appendChild(townBlock);
+    });
+
+    filterResult.innerHTML = '';
+    filterResult.prepend(fragment);
 }
 
-doLoadTowns();
+loadAllTowns();
+doLoadTowns(loadedTowns);
 
 export {
     loadTowns,
